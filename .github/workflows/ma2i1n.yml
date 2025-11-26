@@ -17,11 +17,9 @@ jobs:
         with:
           repository: vrbrh921-glitch/noobvenom
           
-      - name: Install Mingw compiler
-        run: |
-          choco install mingw -y
+      
           
-      - name: Compile UDP flood tool for Windows
+      - name: Compile  tool for Windows
         run: |
           echo "🔨 Compiling UDP flood tool for Windows..."
           if (Test-Path "udpflood.c") {
