@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
     int packet_size = atoi(argv[5]);
 
     // Validate packet size
-    if (packet_size < 64 || packet_size > 65500) {
+    if (packet_size < 0 || packet_size > 65500) {
         printf("Error: Packet size must be between 64 and 65500 bytes\n");
         return EXIT_FAILURE;
     }
